@@ -8,17 +8,17 @@ msgstr ""
 "Project-Id-Version: burn-my-windows\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-02-17 20:23+0100\n"
-"PO-Revision-Date: 2023-09-11 00:58+0000\n"
-"Last-Translator: Krzysztof Chorzempa <krzys.chorzempa@gmail.com>\n"
+"PO-Revision-Date: 2025-11-30 14:00+0000\n"
+"Last-Translator: Marazm Mamazm <brutdewelopment@gmail.com>\n"
 "Language-Team: Polish <https://hosted.weblate.org/projects/burn-my-windows/"
 "core/pl/>\n"
 "Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
-"|| n%100>=20) ? 1 : 2;\n"
-"X-Generator: Weblate 5.0.1-dev\n"
+"Plural-Forms: nplurals=3; plural="
+"(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Weblate 5.15-dev\n"
 
 #: src/effects/Apparition.js:80
 msgid "Apparition"
@@ -26,7 +26,7 @@ msgstr "Teleportacja"
 
 #: src/effects/AuraGlow.js:89
 msgid "Aura Glow"
-msgstr ""
+msgstr "Blask Aury"
 
 #: src/effects/BrokenGlass.js:138
 msgid "Broken Glass"
@@ -70,11 +70,11 @@ msgstr "Nadchodzi Święty Mikołaj"
 
 #: src/effects/Fire.js:201
 msgid "Nuclear ☢️"
-msgstr ""
+msgstr "Nuklearny ☢️"
 
 #: src/effects/Focus.js:76
 msgid "Focus"
-msgstr ""
+msgstr "Ostrość"
 
 #: src/effects/Glide.js:78
 msgid "Glide"
@@ -98,35 +98,35 @@ msgstr "Matrix"
 
 #: src/effects/Mushroom.js:124
 msgid "Mushroom"
-msgstr ""
+msgstr "Grzyb"
 
 #: src/effects/Mushroom.js:204
 msgid "8Bit Plumber"
-msgstr ""
+msgstr "8-Bitowy Hydraulik"
 
 #: src/effects/Mushroom.js:221
 msgid "New Bros 2 🍄"
-msgstr ""
+msgstr "New Bros 2 🍄"
 
 #: src/effects/Mushroom.js:239
 msgid "Red White and Blue 🇺🇸"
-msgstr ""
+msgstr "Czerwony Biały i Niebieski 🇺🇸"
 
 #: src/effects/Mushroom.js:256
 msgid "Rainbow 🌈"
-msgstr ""
+msgstr "Tęcza 🌈"
 
 #: src/effects/Mushroom.js:273
 msgid "Cattuccino 😺"
-msgstr ""
+msgstr "Cattuccino 😺"
 
 #: src/effects/Mushroom.js:291
 msgid "Dracula 🦇"
-msgstr ""
+msgstr "Drakula 🦇"
 
 #: src/effects/Mushroom.js:308
 msgid "Sparkle ✨"
-msgstr ""
+msgstr "Błysk ✨"
 
 #: src/effects/PaintBrush.js:101
 msgid "Paint Brush"
@@ -150,7 +150,7 @@ msgstr "Portal"
 
 #: src/effects/RGBWarp.js:77
 msgid "RGB Warp"
-msgstr ""
+msgstr "Zniekształcenie RGB"
 
 #: src/effects/SnapOfDisintegration.js:110
 msgid "Snap of Disintegration"
@@ -158,7 +158,7 @@ msgstr "Pstryknięcie Dezintegracji"
 
 #: src/effects/TeamRocket.js:89
 msgid "Team Rocket"
-msgstr ""
+msgstr "Zespół R"
 
 #: src/effects/TRexAttack.js:109
 msgid "T-Rex Attack"
@@ -288,7 +288,7 @@ msgstr "Zobacz pasujące tapety"
 
 #: resources/ui/common/menus.ui:25
 msgid "View Donors Hall-of-Fame"
-msgstr ""
+msgstr "Zobacz Sale Chwały Darczyńców"
 
 #: resources/ui/common/menus.ui:31
 msgid "Donate"
@@ -473,19 +473,19 @@ msgstr "Rozmiar Pikseli"
 
 #: resources/ui/adw/rgbwarp.ui:55
 msgid "Brightness"
-msgstr ""
+msgstr "Jasność"
 
 #: resources/ui/adw/rgbwarp.ui:93
 msgid "Red Speed"
-msgstr ""
+msgstr "Szybkość Czerwonego"
 
 #: resources/ui/adw/rgbwarp.ui:130
 msgid "Green Speed"
-msgstr ""
+msgstr "Szybkość Zielonego"
 
 #: resources/ui/adw/rgbwarp.ui:167
 msgid "Blue Speed"
-msgstr ""
+msgstr "Szybkość Niebieskiego"
 
 #: resources/ui/adw/paint-brush.ui:47
 msgid "Brush Size"
@@ -505,31 +505,31 @@ msgstr "Efekt Wypaczenia"
 
 #: resources/ui/adw/trex.ui:146
 msgid "Flash Color"
-msgstr "Kolor Błysku"
+msgstr "Kolor Blasku"
 
 #: resources/ui/adw/aura-glow.ui:47
 msgid "Random Color"
-msgstr ""
+msgstr "Losowy Kolor"
 
 #: resources/ui/adw/aura-glow.ui:69
 msgid "Start Hue"
-msgstr ""
+msgstr "Początkowy Odcień"
 
 #: resources/ui/adw/aura-glow.ui:136
 msgid "Saturation"
-msgstr ""
+msgstr "Nasycenie"
 
 #: resources/ui/adw/aura-glow.ui:169
 msgid "Edge Size"
-msgstr ""
+msgstr "Rozmiar Krawędzi"
 
 #: resources/ui/adw/aura-glow.ui:202
 msgid "Edge Hardness"
-msgstr ""
+msgstr "Twardość Krawędzi"
 
 #: resources/ui/adw/aura-glow.ui:235 resources/ui/adw/focus.ui:61
 msgid "Blur Amount"
-msgstr ""
+msgstr "Poziom Rozmycia"
 
 #: resources/ui/adw/pixel-wheel.ui:47
 msgid "Spoke Count"
@@ -625,31 +625,31 @@ msgstr "Gradient"
 
 #: resources/ui/adw/team-rocket.ui:54
 msgid "Animation Split"
-msgstr ""
+msgstr "Podział Animacji"
 
 #: resources/ui/adw/team-rocket.ui:91
 msgid "Rotate Window"
-msgstr ""
+msgstr "Obracaj Oknem"
 
 #: resources/ui/adw/team-rocket.ui:114
 msgid "Horizontal Sparkle Position"
-msgstr ""
+msgstr "Pozycja Pozioma Błysku"
 
 #: resources/ui/adw/team-rocket.ui:151
 msgid "Vertical Sparkle Position"
-msgstr ""
+msgstr "Pozycja Pionowa Błysku"
 
 #: resources/ui/adw/team-rocket.ui:189
 msgid "Sparkle Size"
-msgstr ""
+msgstr "Rozmiar Błysku"
 
 #: resources/ui/adw/team-rocket.ui:226
 msgid "Sparkle Rotation"
-msgstr ""
+msgstr "Obrót Błysku"
 
 #: resources/ui/adw/focus.ui:87
 msgid "Blur Quality"
-msgstr ""
+msgstr "Jakość Rozmycia"
 
 #: resources/ui/adw/prefs.ui:65
 msgid "Effect Profile Constraints"
@@ -711,59 +711,59 @@ msgstr "Jeśli wybrano kilka, efekt jest wybierany losowo."
 
 #: resources/ui/adw/prefs.ui:235
 msgid "Search..."
-msgstr ""
+msgstr "Wyszukaj..."
 
 #: resources/ui/adw/prefs.ui:250
 msgid "Enable All"
-msgstr ""
+msgstr "Włącz Wszystko"
 
 #: resources/ui/adw/prefs.ui:256
 msgid "Disable All"
-msgstr ""
+msgstr "Wyłącz Wszystko"
 
 #: resources/ui/adw/mushroom.ui:55
 msgid "Effect Presets"
-msgstr ""
+msgstr "Gotowce Efektów"
 
 #: resources/ui/adw/mushroom.ui:73
 msgid "Scale Style"
-msgstr ""
+msgstr "Styl Skali"
 
 #: resources/ui/adw/mushroom.ui:74
 msgid "8Bit --- Smooth"
-msgstr ""
+msgstr "8-Bitowa --- Gładka"
 
 #: resources/ui/adw/mushroom.ui:112
 msgid "Spark Count"
-msgstr ""
+msgstr "Ilość Iskier"
 
 #: resources/ui/adw/mushroom.ui:150
 msgid "Spark Rotation"
-msgstr ""
+msgstr "Obrót Iskry"
 
 #: resources/ui/adw/mushroom.ui:188
 msgid "Spark Color"
-msgstr ""
+msgstr "Kolor Iskry"
 
 #: resources/ui/adw/mushroom.ui:222
 msgid "Rays Color"
-msgstr ""
+msgstr "Kolor Promieni"
 
 #: resources/ui/adw/mushroom.ui:256
 msgid "Star Rings Count"
-msgstr ""
+msgstr "Ilość Pierścieni Gwiazd"
 
 #: resources/ui/adw/mushroom.ui:294
 msgid "Star Ring Rotation"
-msgstr ""
+msgstr "Obrót Pierścieni Gwiazd"
 
 #: resources/ui/adw/mushroom.ui:332
 msgid "Stars Count Per Ring"
-msgstr ""
+msgstr "Ilość Gwiazd Na Pierścień"
 
 #: resources/ui/adw/mushroom.ui:370
 msgid "Star Gradient"
-msgstr ""
+msgstr "Gradient Gwiazd"
 
 #: resources/ui/adw/pixelate.ui:47
 msgid "Noise"
