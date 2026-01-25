@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: burn-my-windows\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-02-17 20:23+0100\n"
-"PO-Revision-Date: 2025-11-06 20:51+0000\n"
+"PO-Revision-Date: 2025-11-08 17:51+0000\n"
 "Last-Translator: bgo-eiu <huyaqoob+toolforge@gmail.com>\n"
 "Language-Team: Turkish (Ottoman) <https://hosted.weblate.org/projects/"
 "burn-my-windows/core/ota/>\n"
@@ -199,7 +199,7 @@ msgstr ""
 
 #: prefs.js:520
 msgid "Cancel"
-msgstr "ایپتال"
+msgstr "ابطال"
 
 #: prefs.js:525
 msgid "Delete"

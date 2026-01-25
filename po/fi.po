@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: burn-my-windows\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-02-17 20:23+0100\n"
-"PO-Revision-Date: 2025-02-27 16:01+0000\n"
-"Last-Translator: Ricky Tigg <ricky.tigg@gmail.com>\n"
+"PO-Revision-Date: 2026-01-25 10:23+0000\n"
+"Last-Translator: Jiri Grönroos <jiri.gronroos@iki.fi>\n"
 "Language-Team: Finnish <https://hosted.weblate.org/projects/burn-my-windows/"
 "core/fi/>\n"
 "Language: fi\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 5.10.2-dev\n"
+"X-Generator: Weblate 5.16-dev\n"
 
 #: src/effects/Apparition.js:80
 msgid "Apparition"
@@ -32,8 +32,9 @@ msgid "Broken Glass"
 msgstr "Rikkoutunut lasi"
 
 #: src/effects/Doom.js:87
+#, fuzzy
 msgid "Doom"
-msgstr ""
+msgstr "Doom"
 
 #: src/effects/EnergizeA.js:74
 msgid "Energize A"
@@ -73,15 +74,15 @@ msgstr "Ydinvoima ☢️"
 
 #: src/effects/Focus.js:76
 msgid "Focus"
-msgstr ""
+msgstr "Kohdistus"
 
 #: src/effects/Glide.js:78
 msgid "Glide"
-msgstr ""
+msgstr "Liuku"
 
 #: src/effects/Glitch.js:80
 msgid "Glitch"
-msgstr ""
+msgstr "Häiriö"
 
 #: src/effects/Hexagon.js:83
 msgid "Hexagon"
@@ -109,7 +110,7 @@ msgstr "Uusi Bros 2 🍄"
 
 #: src/effects/Mushroom.js:239
 msgid "Red White and Blue 🇺🇸"
-msgstr ""
+msgstr "Punainen Valkoinen ja Sininen 🇺🇸"
 
 #: src/effects/Mushroom.js:256
 msgid "Rainbow 🌈"
@@ -117,7 +118,7 @@ msgstr "Sateenkaari 🌈"
 
 #: src/effects/Mushroom.js:273
 msgid "Cattuccino 😺"
-msgstr ""
+msgstr "Cattuccino 😺"
 
 #: src/effects/Mushroom.js:291
 msgid "Dracula 🦇"
@@ -509,7 +510,7 @@ msgstr "Satunnainen väri"
 
 #: resources/ui/adw/aura-glow.ui:69
 msgid "Start Hue"
-msgstr ""
+msgstr "Käynnistä sävy"
 
 #: resources/ui/adw/aura-glow.ui:136
 msgid "Saturation"
@@ -528,8 +529,9 @@ msgid "Blur Amount"
 msgstr "Sumennuksen määrä"
 
 #: resources/ui/adw/pixel-wheel.ui:47
+#, fuzzy
 msgid "Spoke Count"
-msgstr ""
+msgstr "Puolojen lukumäärä"
 
 #: resources/ui/adw/glide.ui:80
 msgid "Squish"
@@ -569,7 +571,7 @@ msgstr ""
 
 #: resources/ui/adw/incinerate.ui:80
 msgid "Turbulence"
-msgstr ""
+msgstr "Turbulenssi"
 
 #: resources/ui/adw/incinerate.ui:113
 msgid "Start at Pointer"
@@ -577,7 +579,7 @@ msgstr ""
 
 #: resources/ui/adw/incinerate.ui:114
 msgid "If disabled, a random location will be chosen."
-msgstr ""
+msgstr "Jos pois käytöstä, satunnainen sijainti valitaan."
 
 #: resources/ui/adw/hexagon.ui:80
 msgid "Mesh Line Width"
@@ -597,7 +599,7 @@ msgstr ""
 
 #: resources/ui/adw/hexagon.ui:164
 msgid "You may want to enable this for dark window themes."
-msgstr ""
+msgstr "Voit halutessasi ottaa tämän käyttöön tummissa ikkunateemoissa."
 
 #: resources/ui/adw/fire.ui:14
 msgid "Presets"
@@ -608,12 +610,13 @@ msgid "Choose a Preset"
 msgstr "Valitse esiasetus"
 
 #: resources/ui/adw/fire.ui:129
+#, fuzzy
 msgid "3D Noise"
-msgstr ""
+msgstr "3D Noise"
 
 #: resources/ui/adw/fire.ui:130
 msgid "Creates a more dynamic fire but requires more GPU power."
-msgstr ""
+msgstr "Luo dynaamisemman tulen, mutta vaatii enemmän näytönohjaimen tehoa."
 
 #: resources/ui/adw/fire.ui:152
 msgid "Gradient"
@@ -621,15 +624,16 @@ msgstr "Liukuväri"
 
 #: resources/ui/adw/team-rocket.ui:54
 msgid "Animation Split"
-msgstr ""
+msgstr "Animaation jako"
 
 #: resources/ui/adw/team-rocket.ui:91
 msgid "Rotate Window"
-msgstr ""
+msgstr "Kierrä ikkunaa"
 
 #: resources/ui/adw/team-rocket.ui:114
+#, fuzzy
 msgid "Horizontal Sparkle Position"
-msgstr ""
+msgstr "Vaakasuora kimallusasento"
 
 #: resources/ui/adw/team-rocket.ui:151
 msgid "Vertical Sparkle Position"
@@ -645,11 +649,11 @@ msgstr ""
 
 #: resources/ui/adw/focus.ui:87
 msgid "Blur Quality"
-msgstr ""
+msgstr "Sumennuksen laatu"
 
 #: resources/ui/adw/prefs.ui:65
 msgid "Effect Profile Constraints"
-msgstr ""
+msgstr "Tehosteprofiilin rajoitukset"
 
 #: resources/ui/adw/prefs.ui:66
 msgid "Define when the current effect settings should be used."
@@ -657,49 +661,50 @@ msgstr ""
 
 #: resources/ui/adw/prefs.ui:70
 msgid "Application"
-msgstr ""
+msgstr "Sovellus"
 
 #: resources/ui/adw/prefs.ui:81 resources/ui/adw/prefs.ui:102
 #: resources/ui/adw/prefs.ui:117 resources/ui/adw/prefs.ui:132
 #: resources/ui/adw/prefs.ui:147 resources/ui/adw/prefs.ui:162
 msgid "Any"
-msgstr ""
+msgstr "Mikä tahansa"
 
 #: resources/ui/adw/prefs.ui:98
 msgid "Animation Type"
-msgstr ""
+msgstr "Animaation tyyppi"
 
 #: resources/ui/adw/prefs.ui:113
 msgid "Window Type"
-msgstr ""
+msgstr "Ikkunan tyyppi"
 
 #: resources/ui/adw/prefs.ui:128
 msgid "Color Scheme"
-msgstr ""
+msgstr "Väriteema"
 
 #: resources/ui/adw/prefs.ui:143
 msgid "Power Mode"
-msgstr ""
+msgstr "Tehotila"
 
 #: resources/ui/adw/prefs.ui:158
 msgid "Power Profile"
-msgstr ""
+msgstr "Virransäästöprofiili"
 
 #: resources/ui/adw/prefs.ui:179
 msgid "Advanced Profile Options"
-msgstr ""
+msgstr "Edistyneet profiiliasetukset"
 
 #: resources/ui/adw/prefs.ui:184
 msgid "Use this profile even if there are better matching profiles."
 msgstr ""
+"Käytä tätä profiilia, vaikka paremmin vastaavia profiileja olisi olemassa."
 
 #: resources/ui/adw/prefs.ui:204
 msgid "Delete this Profile..."
-msgstr ""
+msgstr "Poista tämä profiili..."
 
 #: resources/ui/adw/prefs.ui:223
 msgid "Effect Selection"
-msgstr ""
+msgstr "Tehostevalinta"
 
 #: resources/ui/adw/prefs.ui:224
 msgid "If multiple are selected, one is chosen randomly."
@@ -707,23 +712,23 @@ msgstr "Jos useita on valittu, yksi valitaan satunnaisesti."
 
 #: resources/ui/adw/prefs.ui:235
 msgid "Search..."
-msgstr ""
+msgstr "Etsi..."
 
 #: resources/ui/adw/prefs.ui:250
 msgid "Enable All"
-msgstr ""
+msgstr "Käytä kaikkia"
 
 #: resources/ui/adw/prefs.ui:256
 msgid "Disable All"
-msgstr ""
+msgstr "Poista kaikki käytöstä"
 
 #: resources/ui/adw/mushroom.ui:55
 msgid "Effect Presets"
-msgstr ""
+msgstr "Tehosteen esiasetukset"
 
 #: resources/ui/adw/mushroom.ui:73
 msgid "Scale Style"
-msgstr ""
+msgstr "Skaalauksen tyyli"
 
 #: resources/ui/adw/mushroom.ui:74
 msgid "8Bit --- Smooth"
