@@ -1113,6 +1113,27 @@ SPDX-License-Identifier: CC0-1.0
       <description>Sparkle Size</description>
     </key>
 
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+    <!-- Team Rocket Effect Options                                                    -->
+    <!-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -->
+
+    <key name="butterflies-enable-effect" type="b">
+      <default>false</default>
+      <summary>Butterflies Enable Effect</summary>
+      <description>Use the Butterflies effect.</description>
+    </key>
+
+    <key name="butterflies-animation-time" type="i">
+      <default>1500</default>
+      <summary>Butterflies Time</summary>
+      <description>Transition time for the Butterfly effect.</description>
+    </key>
+
+    <key name="butterflies-width" type="d">
+      <default>0.1</default>
+      <summary>Butterflies Width</summary>
+      <description>Width of the fading effect.</description>
+    </key>
 
   </schema>
 

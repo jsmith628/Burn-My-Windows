@@ -26,6 +26,7 @@ import {ProfileManager} from './src/ProfileManager.js';
 import Apparition from './src/effects/Apparition.js';
 import AuraGlow from './src/effects/AuraGlow.js';
 import BrokenGlass from './src/effects/BrokenGlass.js';
+import Butterflies from './src/effects/Butterflies.js';
 import Doom from './src/effects/Doom.js';
 import EnergizeA from './src/effects/EnergizeA.js';
 import EnergizeB from './src/effects/EnergizeB.js';
@@ -76,6 +77,7 @@ export default class BurnMyWindowsPreferences extends ExtensionPreferences {
     // New effects must be registered here and in extension.js.
     this._ALL_EFFECTS = [
       Apparition, AuraGlow,   BrokenGlass,
+      Butterflies,
       Doom,       EnergizeA,  EnergizeB,
       Fire,       Focus,      Glide,
       Glitch,     Hexagon,    Incinerate,

@@ -25,6 +25,7 @@ import * as utils from './src/utils.js';
 import Apparition from './src/effects/Apparition.js';
 import AuraGlow from './src/effects/AuraGlow.js';
 import BrokenGlass from './src/effects/BrokenGlass.js';
+import Butterflies from './src/effects/Butterflies.js';
 import Doom from './src/effects/Doom.js';
 import EnergizeA from './src/effects/EnergizeA.js';
 import EnergizeB from './src/effects/EnergizeB.js';
@@ -74,7 +75,7 @@ export default class BurnMyWindows extends Extension {
 
     // New effects must be registered here and in prefs.js.
     this._ALL_EFFECTS = [
-      new Apparition(), new AuraGlow(),   new BrokenGlass(), new Doom(),
+      new Apparition(), new AuraGlow(),   new BrokenGlass(), new Butterflies(), new Doom(),
       new EnergizeA(),  new EnergizeB(),  new Fire(),        new Focus(),
       new Glide(),      new Glitch(),     new Hexagon(),     new Incinerate(),
       new Matrix(),     new PaintBrush(), new Pixelate(),    new PixelWheel(),
