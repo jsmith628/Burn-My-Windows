@@ -37,6 +37,14 @@ vec4 blend(vec4 a, vec4 b) {
     return a.a*a + (1.0-a.a)*b;
 }
 
+//
+// A lot of this is based upong images of the Blue Morpho butterfly (Morpho Menelaus)
+// https://en.wikipedia.org/wiki/Morpho_menelaus
+// 
+// Especially images like this:
+// https://upload.wikimedia.org/wikipedia/commons/d/d7/Blue_Morpho.jpg
+//
+
 vec4 butterfly_wings(vec2 p) {
 
     float R2 = dot(p, p);
@@ -51,7 +59,6 @@ vec4 butterfly_wings(vec2 p) {
     const float ANGLE7 = 15.5*PI/16.0;
     
     
-    //float s = pow(min(1.0, abs(a) / (PI/4.0)), 2.0);
     float s1 = mix(0.4, 1.0, smoothstep(ANGLE1, ANGLE2, a));
     float s2 = 0.015*(cos(8.0*TAU*(a-ANGLE2)/(ANGLE6-ANGLE2))+1.0); //use remap instead
     float s = s1*s1
@@ -59,21 +66,36 @@ vec4 butterfly_wings(vec2 p) {
                 -(0.1-s2)*smoothstep(mix(ANGLE2, ANGLE3,0.9), ANGLE4, a)
                 +(0.2-s2)*smoothstep(ANGLE4, ANGLE5, a)
                 +(0.1-s2)*smoothstep(ANGLE5, ANGLE6, a)
-                -(0.5)*smoothstep(ANGLE6, ANGLE7, a);
+                -(0.7)*smoothstep(ANGLE6, ANGLE7, a);
     
     
-    float r = 100.0 * s;
-    float r_inner = r*0.85
-                * smoothstep(ANGLE1, ANGLE2, a)
-                * mix(0.9, 1.0, smoothstep(ANGLE7, ANGLE6, a));
-    
+    float r = 1.0 * s;
+    float r_inner = r*0.85*smoothstep(ANGLE1, ANGLE2, a);
+                
     vec4 color = vec4(0.0,0.0,0.0,0.0);
     if(R2 < r*r) color = vec4(0,0,0,1);
     if(R2 < r_inner*r_inner) color = vec4(0,0,1,1);
     return color;
 }
 
+float superEllipse(vec2 p, vec2 center, vec2 size, float ex) {
+    p = abs(p-center);
+    p *= 2.0/size;
+    return pow(p.x, ex)+pow(p.y, ex);
+}
+
 vec4 body(vec2 x) {
+
+    const vec4 BODY_COLOR = vec4(0.0,0.0,0.0,1.0);
+
+    float abdomen = superEllipse(x, vec2(0,-0.2), vec2(0.2,0.5), 3.0);
+    if(abdomen<=1.0) return BODY_COLOR;
+
+    float thorax = superEllipse(x, vec2(0,0.1), vec2(0.2,0.25), 3.0);
+    if(thorax<=1.0) return BODY_COLOR;
+    
+    float head = superEllipse(x, vec2(0,0.25), vec2(0.17,0.17), 2.0);
+    if(head<=1.0) return BODY_COLOR;
 
     return vec4(0.0,0.0,0.0,0.0);
 }
@@ -81,11 +103,12 @@ vec4 body(vec2 x) {
 vec4 butterfly(vec2 x, vec2 position, float rotation, float wing_angle) {
     vec2 dx = x - position;
     dx = rotate(dx, -rotation);
+    dx /= 100.0;
     
     
-    vec4 wings = butterfly_wings(dx /= vec2(1.0, cos(wing_angle)));
-    vec4 body = body(x);
-    return blend(wings, body);
+    vec4 wings = butterfly_wings(dx / vec2(cos(wing_angle), 1.0));
+    vec4 body = body(dx);
+    return blend(body, wings);
 }
 
 
