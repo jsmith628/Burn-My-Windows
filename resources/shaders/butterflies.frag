@@ -45,7 +45,14 @@ vec4 blend(vec4 a, vec4 b) {
 // https://upload.wikimedia.org/wikipedia/commons/d/d7/Blue_Morpho.jpg
 //
 
-vec4 butterfly_wings(vec2 p) {
+vec4 butterfly_wings(vec2 p, float wing_angle) {
+
+    // Offset so the rotation happens at the connection to the Thorax and NOT the middle
+    p.x = max(0.0, abs(p.x)-0.08);
+    
+    // Rotation around the y-axis followed by an orthogonal projection
+    // NOTE: might come back to this later if I do lighting
+    p /= vec2(cos(wing_angle), 1.0);
 
     float R2 = dot(p, p);
     float a = abs(atan(p.x, p.y));
@@ -56,7 +63,7 @@ vec4 butterfly_wings(vec2 p) {
     const float ANGLE4 = 10.0*PI/16.0;
     const float ANGLE5 = 11.0*PI/16.0;
     const float ANGLE6 = 14.0*PI/16.0;
-    const float ANGLE7 = 15.5*PI/16.0;
+    const float ANGLE7 = 16.0*PI/16.0;
     
     
     float s1 = mix(0.4, 1.0, smoothstep(ANGLE1, ANGLE2, a));
@@ -106,7 +113,7 @@ vec4 butterfly(vec2 x, vec2 position, float rotation, float wing_angle) {
     dx /= 100.0;
     
     
-    vec4 wings = butterfly_wings(dx / vec2(cos(wing_angle), 1.0));
+    vec4 wings = butterfly_wings(dx, wing_angle);
     vec4 body = body(dx);
     return blend(body, wings);
 }
