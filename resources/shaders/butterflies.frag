@@ -107,10 +107,10 @@ vec4 body(vec2 x) {
     return vec4(0.0,0.0,0.0,0.0);
 }
 
-vec4 butterfly(vec2 x, vec2 position, float rotation, float wing_angle) {
+vec4 butterfly(vec2 x, vec2 position, float size, float rotation, float wing_angle) {
     vec2 dx = x - position;
     dx = rotate(dx, -rotation);
-    dx /= 100.0;
+    dx /= size;
     
     
     vec4 wings = butterfly_wings(dx, wing_angle);
@@ -118,6 +118,96 @@ vec4 butterfly(vec2 x, vec2 position, float rotation, float wing_angle) {
     return blend(body, wings);
 }
 
+
+/*
+struct Cell {
+    int angular;
+    int radial;
+    int subsection;
+};
+const int angleSections = 2;
+const float dr = 10.0;
+Cell cellID(in vec2 p, int angleSections, float dr) {
+
+    float r = length(p);
+    float a = (atan(p.y, p.x)+PI)/TAU;
+    float num = float(angleSections);
+
+    Cell c;
+
+    c.angular = int(floor(num*a)/num);
+    c.radial = int(floor(r/dr));
+    
+    float remainder = (a-float(c.angular)) * num;
+    float numSubsections = float(c.radial);
+    c.subsection = int(floor(numSubsections*remainder) / numSubsections);
+
+    return c;
+}
+*/
+
+// Been developing using shader toy, but I want to log this progress in git
+/*
+// I want to leave open the option to use an ivec3 or a struct for this in the future
+// If I could use a typedef here, I would.
+#define Cell ivec2
+
+const vec2 animCenter = vec2(960.0, 540.0)/2.0;
+const vec2 cellWidth = vec2(20.0, 20.0);
+
+const float speed = 400.0;
+
+Cell cellID(vec2 pos, float t) {
+    pos -= animCenter;
+    vec2 ray = normalize(pos);
+    pos -= ray*speed*t;
+    Cell c = ivec2((pos) / cellWidth);
+    return c;
+}
+
+struct Butterfly {
+    vec2 pos;
+    float rotation;
+    float wingAngle;
+};
+
+Butterfly butterfly(Cell id, float t) {
+
+    Butterfly b;
+    b.pos = animCenter + (vec2(id)+0.5)*cellWidth;
+    //b.rotation = TAU * smoothstep(-1.0, 1.0, sin(2.5*iTime));
+    b.rotation = 0.0;
+    
+    float r = length(b.pos - animCenter);
+    vec2 ray = normalize(vec2(id)+0.5);
+    b.rotation = atan(ray.y, ray.x)-TAU/4.0;
+    
+    t = max(0.0, t-1.5*r/speed);
+    b.pos += ray*speed*t*smoothstep(0.0, 0.5, t);
+    
+    b.wingAngle = TAU/4.0 * sin(t*10.0 +float(id.x + 37*id.y));
+    
+    return b;
+}
+
+void mainImage(out vec4 fragColor, in vec2 fragCoord){
+
+    fragColor = vec4(1,1,1,0);
+
+    ivec2 cell = cellID(fragCoord, iTime);
+    fragColor.xy = vec2(cell)*cellWidth / iResolution.xy + 0.5;
+
+    const int borderSize = 15;
+    for(int i=-borderSize; i<=borderSize; i++) {
+        for(int j=-borderSize; j<=borderSize; j++) {
+            Butterfly b = butterfly(cell + ivec2(i,j), iTime);
+            vec4 c = butterfly(fragCoord, b.pos, 10.0, b.rotation, b.wingAngle);
+            fragColor = blend(c, fragColor);
+        }
+    }
+
+}
+*/
 
 void main() {
   // Get the color from the window texture.
