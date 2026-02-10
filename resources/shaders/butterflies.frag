@@ -118,49 +118,42 @@ vec4 butterfly(vec2 x, vec2 position, float size, float rotation, float wing_ang
     return blend(body, wings);
 }
 
-
-/*
-struct Cell {
-    int angular;
-    int radial;
-    int subsection;
-};
-const int angleSections = 2;
-const float dr = 10.0;
-Cell cellID(in vec2 p, int angleSections, float dr) {
-
-    float r = length(p);
-    float a = (atan(p.y, p.x)+PI)/TAU;
-    float num = float(angleSections);
-
-    Cell c;
-
-    c.angular = int(floor(num*a)/num);
-    c.radial = int(floor(r/dr));
-    
-    float remainder = (a-float(c.angular)) * num;
-    float numSubsections = float(c.radial);
-    c.subsection = int(floor(numSubsections*remainder) / numSubsections);
-
-    return c;
-}
-*/
-
 // Been developing using shader toy, but I want to log this progress in git
 /*
 // I want to leave open the option to use an ivec3 or a struct for this in the future
 // If I could use a typedef here, I would.
 #define Cell ivec2
 
+const float maxWingAngle = TAU/5.0;
+
 const vec2 animCenter = vec2(960.0, 540.0)/2.0;
 const vec2 cellWidth = vec2(20.0, 20.0);
 
+const float accel = 400.0;
 const float speed = 400.0;
+const float timeToAccel = speed/accel;
+const float distToAccel = accel*timeToAccel*timeToAccel/2.0;
+
+
+float baseDistFromTime(float t) {
+    float d = 0.0;
+    d += accel * pow(min(t,timeToAccel),2.0)/2.0;
+    d += speed * max(0.0, t-timeToAccel);
+    return d;
+}
+float baseTimeFromDist(float d) {
+    if(d>=distToAccel) return (d-distToAccel)/speed + timeToAccel;
+    if(d>=0.0) return sqrt(2.0*d/accel);
+    return 0.0;
+}
 
 Cell cellID(vec2 pos, float t) {
     pos -= animCenter;
     vec2 ray = normalize(pos);
-    pos -= ray*speed*t;
+    
+    t = max(0.0, t - baseTimeFromDist(length(pos)));
+    pos -= ray*baseDistFromTime(t);
+    
     Cell c = ivec2((pos) / cellWidth);
     return c;
 }
@@ -181,14 +174,26 @@ Butterfly butterfly(Cell id, float t) {
     float r = length(b.pos - animCenter);
     vec2 ray = normalize(vec2(id)+0.5);
     b.rotation = atan(ray.y, ray.x)-TAU/4.0;
+
+    t = max(0.0, t-baseTimeFromDist(r*1.2));
     
-    t = max(0.0, t-1.5*r/speed);
-    b.pos += ray*speed*t*smoothstep(0.0, 0.5, t);
+    const float startup = 0.5;
+    b.wingAngle = maxWingAngle * sin(
+        5.0*TAU*smoothstep(0.0, startup+timeToAccel, t) +
+        3.0*TAU*smoothstep(timeToAccel+0.5, timeToAccel+2.0, t)
+    );
     
-    b.wingAngle = TAU/4.0 * sin(t*10.0 +float(id.x + 37*id.y));
+    t = max(0.0, t-startup);
+    b.pos += ray * baseDistFromTime(t);
+    
+
+    //b.wingAngle = TAU/4.0 * sin(t*10.0 +float(id.x + 37*id.y));
+    
+
     
     return b;
 }
+
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord){
 
