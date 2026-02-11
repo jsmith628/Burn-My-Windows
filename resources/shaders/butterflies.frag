@@ -33,6 +33,9 @@
 // The width of the fading effect is loaded from the settings.
 uniform float uFadeWidth;
 
+const float PI  = radians(180.0);
+const float TAU = radians(360.0);
+
 vec4 blend(vec4 a, vec4 b) {
     return a.a*a + (1.0-a.a)*b;
 }
@@ -118,8 +121,6 @@ vec4 butterfly(vec2 x, vec2 position, float size, float rotation, float wing_ang
     return blend(body, wings);
 }
 
-// Been developing using shader toy, but I want to log this progress in git
-/*
 // I want to leave open the option to use an ivec3 or a struct for this in the future
 // If I could use a typedef here, I would.
 #define Cell ivec2
@@ -177,14 +178,20 @@ Butterfly butterfly(Cell id, float t) {
 
     t = max(0.0, t-baseTimeFromDist(r*1.2));
     
-    const float startup = 0.5;
+    const float startup = 0.25;
     b.wingAngle = maxWingAngle * sin(
         5.0*TAU*smoothstep(0.0, startup+timeToAccel, t) +
         3.0*TAU*smoothstep(timeToAccel+0.5, timeToAccel+2.0, t)
     );
-    
     t = max(0.0, t-startup);
-    b.pos += ray * baseDistFromTime(t);
+    
+
+    vec2 h = hash22(vec2(id));
+    vec2 offset;
+    offset.x = simplex2D(vec2(h.x, t));
+    offset.y = simplex2D(vec2(h.y, t));
+    
+    b.pos += ray * baseDistFromTime(t) + cellWidth*offset;
     
 
     //b.wingAngle = TAU/4.0 * sin(t*10.0 +float(id.x + 37*id.y));
@@ -194,43 +201,33 @@ Butterfly butterfly(Cell id, float t) {
     return b;
 }
 
+vec4 pixelColor(in vec2 texCoord, in vec2 resolution, float time) {
+    vec4 color = vec4(1,1,1,0);
 
-void mainImage(out vec4 fragColor, in vec2 fragCoord){
-
-    fragColor = vec4(1,1,1,0);
-
-    ivec2 cell = cellID(fragCoord, iTime);
-    fragColor.xy = vec2(cell)*cellWidth / iResolution.xy + 0.5;
+    vec2 windowCoord = texCoord*resolution;
+    ivec2 cell = cellID(windowCoord, time);
+    color.xy = vec2(cell)*cellWidth / resolution + 0.5;
 
     const int borderSize = 15;
     for(int i=-borderSize; i<=borderSize; i++) {
         for(int j=-borderSize; j<=borderSize; j++) {
-            Butterfly b = butterfly(cell + ivec2(i,j), iTime);
-            vec4 c = butterfly(fragCoord, b.pos, 10.0, b.rotation, b.wingAngle);
-            fragColor = blend(c, fragColor);
+            Butterfly b = butterfly(cell + ivec2(i,j), time);
+            vec4 c = butterfly(windowCoord, b.pos, 10.0, b.rotation, b.wingAngle);
+            color = blend(c, color);
         }
     }
 
+    return color;
 }
-*/
+
+// For shaderToy
+// void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+//     fragColor = pixelColor(fragCoord/iResolution.xy, iResolution.xy, iTime);
+// }
 
 void main() {
   // Get the color from the window texture.
   vec4 oColor = getInputColor(iTexCoord.st);
-
-  // Radial distance from window edge to the window's center.
-  float dist = length(iTexCoord.st - 0.5) * 2.0 / sqrt(2.0);
-
-  // This gradually dissolves from [1..0] from the outside to the center. We
-  // switch the direction for opening and closing.
-  float progress = uForOpening ? 1.0 - uProgress : uProgress;
-  float mask = (1.0 - progress * (1.0 + uFadeWidth) - dist + uFadeWidth) / uFadeWidth;
-
-  // Make the mask smoother.
-  mask = smoothstep(0, 1, mask);
-
-  // Apply the mask to the output.
-  oColor.a *= mask;
-
-  setOutputColor(oColor);
+  vec4 color = pixelColor(iTexCoord.st, uSize, uProgress * uDuration);
+  setOutputColor(color);
 }
