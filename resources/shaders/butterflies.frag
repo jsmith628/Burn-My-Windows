@@ -128,12 +128,15 @@ vec4 butterfly(vec2 x, vec2 position, float size, float rotation, float wing_ang
 const float maxWingAngle = TAU/5.0;
 
 const vec2 animCenter = vec2(960.0, 540.0)/2.0;
-const vec2 cellWidth = vec2(20.0, 20.0);
+const vec2 cellWidth = vec2(30.0, 30.0);
 
 const float accel = 400.0;
 const float speed = 400.0;
 const float timeToAccel = speed/accel;
 const float distToAccel = accel*timeToAccel*timeToAccel/2.0;
+
+//const float startup = 0.25;
+const float startup = 0.0;
 
 
 float baseDistFromTime(float t) {
@@ -150,10 +153,13 @@ float baseTimeFromDist(float d) {
 
 Cell cellID(vec2 pos, float t) {
     pos -= animCenter;
+    
+    float r = length(pos);
     vec2 ray = normalize(pos);
     
-    t = max(0.0, t - baseTimeFromDist(length(pos)));
-    pos -= ray*baseDistFromTime(t);
+    t = max(0.0, t - startup);
+    t = max(0.0, t - baseTimeFromDist(r*1.2));
+    pos -= ray*(speed*t);
     
     Cell c = ivec2((pos) / cellWidth);
     return c;
@@ -163,7 +169,15 @@ struct Butterfly {
     vec2 pos;
     float rotation;
     float wingAngle;
+    float opacity;
 };
+
+vec2 pathNoise(vec2 hash, float t) {
+    vec2 offset;
+    offset.x = simplex2D(vec2(hash.x, 2.0*baseDistFromTime(t)/speed));
+    offset.y = simplex2D(vec2(hash.y, 2.0*baseDistFromTime(t)/speed));
+    return offset;
+}
 
 Butterfly butterfly(Cell id, float t) {
 
@@ -174,11 +188,13 @@ Butterfly butterfly(Cell id, float t) {
     
     float r = length(b.pos - animCenter);
     vec2 ray = normalize(vec2(id)+0.5);
-    b.rotation = atan(ray.y, ray.x)-TAU/4.0;
+    //b.rotation = atan(ray.y, ray.x)-TAU/4.0;
+
+    b.opacity = smoothstep(0.0, 0.1, t-baseTimeFromDist(r*1.2));
 
     t = max(0.0, t-baseTimeFromDist(r*1.2));
+    //t = max(0.0, t - r/10.0);
     
-    const float startup = 0.25;
     b.wingAngle = maxWingAngle * sin(
         5.0*TAU*smoothstep(0.0, startup+timeToAccel, t) +
         3.0*TAU*smoothstep(timeToAccel+0.5, timeToAccel+2.0, t)
@@ -186,33 +202,38 @@ Butterfly butterfly(Cell id, float t) {
     t = max(0.0, t-startup);
     
 
+    float dt = 0.1;
     vec2 h = hash22(vec2(id));
-    vec2 offset;
-    offset.x = simplex2D(vec2(h.x, t));
-    offset.y = simplex2D(vec2(h.y, t));
+    vec2 offset1 = 1.2*pathNoise(h, t);
+    vec2 offset2 = 1.2*pathNoise(h, t+dt);
+    vec2 pos1 = ray * baseDistFromTime(t) + cellWidth*offset1;
+    vec2 pos2 = ray * baseDistFromTime(t+dt) + cellWidth*offset2;
     
-    b.pos += ray * baseDistFromTime(t) + cellWidth*offset;
+    vec2 vel_dir = normalize(pos2-pos1);
+    b.rotation = atan(vel_dir.y, vel_dir.x)-TAU/4.0;
+    b.pos += pos1;
     
-
     //b.wingAngle = TAU/4.0 * sin(t*10.0 +float(id.x + 37*id.y));
-    
-
     
     return b;
 }
 
-vec4 pixelColor(in vec2 texCoord, in vec2 resolution, float time) {
+vec4 pixelColor(in vec2 texCoord, in vec2 resolution, float time, inout float window_opacity) {
     vec4 color = vec4(1,1,1,0);
 
     vec2 windowCoord = texCoord*resolution;
     ivec2 cell = cellID(windowCoord, time);
-    color.xy = vec2(cell)*cellWidth / resolution + 0.5;
+    //color.xy = vec2(cell)*cellWidth / resolution + 0.5;
 
-    const int borderSize = 15;
+    float r = length(windowCoord - animCenter-cellWidth/2.0);
+    window_opacity = smoothstep(0.1, 0.0, time-baseTimeFromDist(r*2.2));
+
+    const int borderSize = 10;
     for(int i=-borderSize; i<=borderSize; i++) {
         for(int j=-borderSize; j<=borderSize; j++) {
             Butterfly b = butterfly(cell + ivec2(i,j), time);
             vec4 c = butterfly(windowCoord, b.pos, 10.0, b.rotation, b.wingAngle);
+            c.a = c.a*b.opacity;
             color = blend(c, color);
         }
     }
@@ -228,6 +249,11 @@ vec4 pixelColor(in vec2 texCoord, in vec2 resolution, float time) {
 void main() {
   // Get the color from the window texture.
   vec4 oColor = getInputColor(iTexCoord.st);
-  vec4 color = pixelColor(iTexCoord.st, uSize, uProgress * uDuration);
+  float opacity = 0.0;
+  vec4 color = pixelColor(iTexCoord.st, uSize, uProgress * uDuration, opacity);
+  color = blend(color, oColor);
+  color.a *= opacity;
+
+
   setOutputColor(color);
 }
