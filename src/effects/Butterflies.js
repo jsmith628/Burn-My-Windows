@@ -57,7 +57,7 @@ export default class Effect {
 
   // The effect is available on all GNOME Shell versions supported by this extension.
   static getMinShellVersion() {
-    return [3, 36];
+    return [3, 38];
   }
 
   // This will be called in various places where a unique identifier for this effect is

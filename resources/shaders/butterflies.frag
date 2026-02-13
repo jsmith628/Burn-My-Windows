@@ -121,19 +121,21 @@ vec4 butterfly(vec2 x, vec2 position, float size, float rotation, float wing_ang
     return blend(body, wings);
 }
 
+// float uDuration = 3.0;
+// vec2 uSize;
+
 // I want to leave open the option to use an ivec3 or a struct for this in the future
 // If I could use a typedef here, I would.
 #define Cell ivec2
 
 const float maxWingAngle = TAU/5.0;
 
-const vec2 animCenter = vec2(960.0, 540.0)/2.0;
-const vec2 cellWidth = vec2(40.0, 40.0);
-
-const float accel = 400.0;
-const float speed = 400.0;
-const float timeToAccel = speed/accel;
-const float distToAccel = accel*timeToAccel*timeToAccel/2.0;
+vec2 animCenter;
+vec2 cellWidth;
+float accel;
+float speed;
+float timeToAccel;
+float distToAccel;
 
 //const float startup = 0.25;
 const float startup = 0.0;
@@ -192,29 +194,28 @@ struct Butterfly {
     float opacity;
 };
 
-vec2 pathNoise(vec2 hash, float t) {
+vec2 pathNoise(vec2 ray, vec2 hash, float d) {
     vec2 offset;
-    offset.x = 2.0*simplex2D(vec2(hash.x, 2.0*baseDistFromTime(t)/speed))-1.0;
-    offset.y = 2.0*simplex2D(vec2(hash.y, 2.0*baseDistFromTime(t)/speed))-1.0;
-    return offset;
+    offset.x = 2.0*simplex2D(vec2(hash.x, 1.0*d/speed))-1.0;
+    offset.y = 2.0*simplex2D(vec2(hash.y, 1.0*d/speed))-1.0;
+    
+    vec2 par  = dot(offset, ray)*ray;
+    vec2 perp = offset - par;
+    return par*0.5 + perp*1.25;
 }
 
 Butterfly butterfly(Cell id, float t) {
 
     Butterfly b;
     b.pos = animCenter + (vec2(id)+0.5)*cellWidth;
-    //b.rotation = TAU * smoothstep(-1.0, 1.0, sin(2.5*iTime));
     b.rotation = 0.0;
     
     float r = length(b.pos - animCenter);
     vec2 ray = normalize(vec2(id)+0.5);
     //b.rotation = atan(ray.y, ray.x)-TAU/4.0;
 
-    b.opacity = 1.0;
-    //b.opacity = smoothstep(0.0, 0.1, t-baseTimeFromDist(r*1.2));
-
     t = max(0.0, t-baseTimeFromDist(r*1.2));
-    //t = max(0.0, t - r/10.0);
+    b.opacity = smoothstep(0.0, 0.2, t/uDuration);
     
     b.wingAngle = maxWingAngle * sin(
         5.0*TAU*smoothstep(0.0, startup+timeToAccel, t) +
@@ -222,28 +223,31 @@ Butterfly butterfly(Cell id, float t) {
     );
     t = max(0.0, t-startup);
     
-
     float dt = 0.1;
     vec2 h = hash22(vec2(id));
-    vec2 offset1 = 0.5*pathNoise(h, t);
-    vec2 offset2 = 0.5*pathNoise(h, t+dt);
-    vec2 pos1 = ray * baseDistFromTime(t) + cellWidth*offset1;
-    vec2 pos2 = ray * baseDistFromTime(t+dt) + cellWidth*offset2;
+    
+    float r1 = baseDistFromTime(t);
+    float r2 = baseDistFromTime(t+dt);
+    vec2 offset1 = pathNoise(ray, h, r1)*cellWidth;
+    vec2 offset2 =  pathNoise(ray, h, r2)*cellWidth;
+    vec2 pos1 = ray*r1 + offset1;
+    vec2 pos2 = ray*r2 + offset2;
     
     vec2 vel_dir = normalize(pos2-pos1);
     b.rotation = atan(vel_dir.y, vel_dir.x)-TAU/4.0;
     b.pos += pos1;
     
-    //b.wingAngle = TAU/4.0 * sin(t*10.0 +float(id.x + 37*id.y));
-    
     return b;
 }
 
-vec4 renderButterfliesAround(Cell id, vec2 windowCoord, float time) {
+vec4 renderButterfliesNear(Cell id, vec2 windowCoord, float time) {
     vec4 color = vec4(0,0,0,0);
-    const int borderSize = 4;
-    for(int i=-borderSize; i<=borderSize; i++) {
-        for(int j=-borderSize; j<=borderSize; j++) {
+    
+    // id is meant to be the *most likely* closest butterfly to this pixel
+    // However, we want them to be able to fly around freely.
+    const int BORDER_SIZE = 3;
+    for(int i=-BORDER_SIZE; i<=BORDER_SIZE; i++) {
+        for(int j=-BORDER_SIZE; j<=BORDER_SIZE; j++) {
             Butterfly b = butterfly(id + ivec2(i,j), time);
             vec4 c = butterfly(windowCoord, b.pos, 10.0, b.rotation, b.wingAngle);
             c.a = c.a*b.opacity;
@@ -258,29 +262,62 @@ vec4 renderButterfliesAround(Cell id, vec2 windowCoord, float time) {
 vec4 pixelColor(in vec2 texCoord, in vec2 resolution, float time, inout float window_opacity) {
     vec4 color = vec4(1,1,1,0);
 
+    // Get the IDs of the likely closest butterfly at this location
+    // This is *really* important, as it lets us call the main render function far far fewer
+    // times than the actual number of butterflies
+    ivec2 cell1, cell2;    
     vec2 windowCoord = texCoord*resolution;
-    ivec2 cell1, cell2;
     cellIDs(windowCoord, time, cell1, cell2);
-    color.xy = vec2(cell1)*cellWidth / resolution + 0.5;
+    //color.xy = vec2(cell1)*cellWidth / resolution + 0.5;
     //color.xy = mix(color.xy, 2.0*vec2(cell2)*cellWidth / resolution + 0.5, 0.5);
 
-    float r = length(windowCoord - animCenter-cellWidth/2.0);
-    window_opacity = smoothstep(0.1, 0.0, time-baseTimeFromDist(r*2.2));
+    // Fade out the center of the window
+    float r = length(windowCoord - animCenter);
+    float timeToInner = time-baseTimeFromDist(r*1.5);
+    window_opacity  = smoothstep(0.1, 0.0, timeToInner/uDuration);
+    
+    // Fade out if we take too long
+    float timeToEnd = uDuration - time;
+    window_opacity  *= smoothstep(0.0, 0.25, timeToEnd/uDuration);
+    color.r = window_opacity;
 
-    color = blend(renderButterfliesAround(cell1, windowCoord, time), color);
-    color = blend(renderButterfliesAround(cell2, windowCoord, time), color);
-
+    // We need to render around 2 different IDs. One for the butterflies
+    // that are waiting or just starting, and one for the ones flying above
+    color = blend(renderButterfliesNear(cell1, windowCoord, time), color);
+    color = blend(renderButterfliesNear(cell2, windowCoord, time), color);
     return color;
 }
 
 // // For shaderToy
 // void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+
+//     uSize = iResolution.xy;
+//     uDuration = 1.0;
+    
+//     animCenter = uSize/2.0;
+//     cellWidth = vec2(40.0, 40.0);
+
+//     speed = max(uSize.x, uSize.y)/uDuration;
+//     accel = speed / (0.3*uDuration);
+//     timeToAccel = speed/accel;
+//     distToAccel = accel*timeToAccel*timeToAccel/2.0;
+
+
 //     float opacity = 0.0;
 //     fragColor = pixelColor(fragCoord/iResolution.xy, iResolution.xy, iTime, opacity);
 //     fragColor.a = opacity;
 // }
 
 void main() {
+
+  animCenter = uSize/2.0;
+  cellWidth = vec2(40.0, 40.0);
+
+  speed = max(uSize.x, uSize.y)/uDuration;
+  accel = speed / (0.3*uDuration);
+  timeToAccel = speed/accel;
+  distToAccel = accel*timeToAccel*timeToAccel/2.0;
+
   // Get the color from the window texture.
   vec4 oColor = getInputColor(iTexCoord.st);
   float opacity = 0.0;
