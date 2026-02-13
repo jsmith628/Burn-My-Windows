@@ -128,7 +128,7 @@ vec4 butterfly(vec2 x, vec2 position, float size, float rotation, float wing_ang
 const float maxWingAngle = TAU/5.0;
 
 const vec2 animCenter = vec2(960.0, 540.0)/2.0;
-const vec2 cellWidth = vec2(30.0, 30.0);
+const vec2 cellWidth = vec2(40.0, 40.0);
 
 const float accel = 400.0;
 const float speed = 400.0;
@@ -151,18 +151,38 @@ float baseTimeFromDist(float d) {
     return 0.0;
 }
 
-Cell cellID(vec2 pos, float t) {
-    pos -= animCenter;
-    
+float path(float t, float r0) {
+    t = max(0.0, t-baseTimeFromDist(r0*1.2));
+    t = max(0.0, t-startup);
+    return r0 + baseDistFromTime(t);
+}
+
+float invPath(float t, float r, bool top) {
+    float r0_min=0.0, r0_max=r, r0_mid;    
+    for(int i=0; i<4; i++) {
+        r0_mid = mix(r0_min, r0_max, 0.5);
+        float r_test = path(t, r0_mid);
+        if(top ^^ r_test<=r) {
+            r0_max = r0_mid;
+        } else {
+            r0_min = r0_mid;            
+        }
+    }
+    return r0_mid;
+}
+
+
+
+void cellIDs(vec2 pos, float t, out Cell id1, out Cell id2) {
+    pos -= animCenter;    
     float r = length(pos);
-    vec2 ray = normalize(pos);
+    vec2 ray = pos/r;
+
+    vec2 orig_pos = ray*invPath(t, r, true);        
+    id1 = ivec2(orig_pos / cellWidth);
     
-    t = max(0.0, t - startup);
-    t = max(0.0, t - baseTimeFromDist(r*1.2));
-    pos -= ray*(speed*t);
-    
-    Cell c = ivec2((pos) / cellWidth);
-    return c;
+    orig_pos = ray*invPath(t,r,false);        
+    id2 = ivec2(orig_pos / cellWidth);
 }
 
 struct Butterfly {
@@ -174,8 +194,8 @@ struct Butterfly {
 
 vec2 pathNoise(vec2 hash, float t) {
     vec2 offset;
-    offset.x = simplex2D(vec2(hash.x, 2.0*baseDistFromTime(t)/speed));
-    offset.y = simplex2D(vec2(hash.y, 2.0*baseDistFromTime(t)/speed));
+    offset.x = 2.0*simplex2D(vec2(hash.x, 2.0*baseDistFromTime(t)/speed))-1.0;
+    offset.y = 2.0*simplex2D(vec2(hash.y, 2.0*baseDistFromTime(t)/speed))-1.0;
     return offset;
 }
 
@@ -190,7 +210,8 @@ Butterfly butterfly(Cell id, float t) {
     vec2 ray = normalize(vec2(id)+0.5);
     //b.rotation = atan(ray.y, ray.x)-TAU/4.0;
 
-    b.opacity = smoothstep(0.0, 0.1, t-baseTimeFromDist(r*1.2));
+    b.opacity = 1.0;
+    //b.opacity = smoothstep(0.0, 0.1, t-baseTimeFromDist(r*1.2));
 
     t = max(0.0, t-baseTimeFromDist(r*1.2));
     //t = max(0.0, t - r/10.0);
@@ -204,8 +225,8 @@ Butterfly butterfly(Cell id, float t) {
 
     float dt = 0.1;
     vec2 h = hash22(vec2(id));
-    vec2 offset1 = 1.2*pathNoise(h, t);
-    vec2 offset2 = 1.2*pathNoise(h, t+dt);
+    vec2 offset1 = 0.5*pathNoise(h, t);
+    vec2 offset2 = 0.5*pathNoise(h, t+dt);
     vec2 pos1 = ray * baseDistFromTime(t) + cellWidth*offset1;
     vec2 pos2 = ray * baseDistFromTime(t+dt) + cellWidth*offset2;
     
@@ -218,20 +239,12 @@ Butterfly butterfly(Cell id, float t) {
     return b;
 }
 
-vec4 pixelColor(in vec2 texCoord, in vec2 resolution, float time, inout float window_opacity) {
-    vec4 color = vec4(1,1,1,0);
-
-    vec2 windowCoord = texCoord*resolution;
-    ivec2 cell = cellID(windowCoord, time);
-    //color.xy = vec2(cell)*cellWidth / resolution + 0.5;
-
-    float r = length(windowCoord - animCenter-cellWidth/2.0);
-    window_opacity = smoothstep(0.1, 0.0, time-baseTimeFromDist(r*2.2));
-
-    const int borderSize = 10;
+vec4 renderButterfliesAround(Cell id, vec2 windowCoord, float time) {
+    vec4 color = vec4(0,0,0,0);
+    const int borderSize = 4;
     for(int i=-borderSize; i<=borderSize; i++) {
         for(int j=-borderSize; j<=borderSize; j++) {
-            Butterfly b = butterfly(cell + ivec2(i,j), time);
+            Butterfly b = butterfly(id + ivec2(i,j), time);
             vec4 c = butterfly(windowCoord, b.pos, 10.0, b.rotation, b.wingAngle);
             c.a = c.a*b.opacity;
             color = blend(c, color);
@@ -241,9 +254,30 @@ vec4 pixelColor(in vec2 texCoord, in vec2 resolution, float time, inout float wi
     return color;
 }
 
-// For shaderToy
+
+vec4 pixelColor(in vec2 texCoord, in vec2 resolution, float time, inout float window_opacity) {
+    vec4 color = vec4(1,1,1,0);
+
+    vec2 windowCoord = texCoord*resolution;
+    ivec2 cell1, cell2;
+    cellIDs(windowCoord, time, cell1, cell2);
+    color.xy = vec2(cell1)*cellWidth / resolution + 0.5;
+    //color.xy = mix(color.xy, 2.0*vec2(cell2)*cellWidth / resolution + 0.5, 0.5);
+
+    float r = length(windowCoord - animCenter-cellWidth/2.0);
+    window_opacity = smoothstep(0.1, 0.0, time-baseTimeFromDist(r*2.2));
+
+    color = blend(renderButterfliesAround(cell1, windowCoord, time), color);
+    color = blend(renderButterfliesAround(cell2, windowCoord, time), color);
+
+    return color;
+}
+
+// // For shaderToy
 // void mainImage(out vec4 fragColor, in vec2 fragCoord) {
-//     fragColor = pixelColor(fragCoord/iResolution.xy, iResolution.xy, iTime);
+//     float opacity = 0.0;
+//     fragColor = pixelColor(fragCoord/iResolution.xy, iResolution.xy, iTime, opacity);
+//     fragColor.a = opacity;
 // }
 
 void main() {
