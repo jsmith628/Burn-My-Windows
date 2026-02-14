@@ -1129,10 +1129,10 @@ SPDX-License-Identifier: CC0-1.0
       <description>Transition time for the Butterfly effect.</description>
     </key>
 
-    <key name="butterflies-width" type="d">
-      <default>0.1</default>
-      <summary>Butterflies Width</summary>
-      <description>Width of the fading effect.</description>
+    <key name="butterflies-use-pointer" type="b">
+      <default>true</default>
+      <summary>Butterflies Use Pointer</summary>
+      <description>Use the pointer location for the start of the Butterflies effect.</description>
     </key>
 
   </schema>

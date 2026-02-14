@@ -75,6 +75,29 @@ SPDX-License-Identifier: GPL-3.0-or-later
       </object>
     </child>
 
+    <child>
+      <object class="AdwActionRow">
+        <property name="title" translatable="yes">Start at Pointer</property>
+        <property name="subtitle" translatable="yes">If disabled, a random location will be chosen.</property>
+        <property name="activatable-widget">butterflies-use-pointer</property>
+        <child>
+          <object class="GtkSwitch" id="butterflies-use-pointer">
+            <property name="valign">center</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="reset-butterflies-use-pointer">
+            <property name="icon-name">edit-clear-symbolic</property>
+            <property name="valign">center</property>
+            <property name="tooltip-text" translatable="yes">Reset to Default Value</property>
+            <style>
+              <class name="flat" />
+            </style>
+          </object>
+        </child>
+      </object>
+    </child>
+
   </object>
 
 </interface>

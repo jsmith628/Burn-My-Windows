@@ -24,32 +24,69 @@ const ShaderFactory = await utils.importInShellOnly("./ShaderFactory.js");
 const _ = await utils.importGettext();
 
 //////////////////////////////////////////////////////////////////////////////////////////
-//  Butterflies!                                                                    //
-// <- Please add a description of your effect here ->                                   //
+//  Butterflies!                                                                        //
+// Whisks your windows away in a cloud of beautiful bufferflies                         //
 //////////////////////////////////////////////////////////////////////////////////////////
 
-// The effect class can be used to get some metadata (like the effect's name or supported
-// GNOME Shell versions), to initialize the respective page of the settings dialog, as
-// well as to create the actual shader for the effect.
 export default class Effect {
-  // The constructor creates a ShaderFactory which will be used by extension.js to create
-  // shader instances for this effect. The shaders will be automagically created using the
-  // GLSL file in resources/shaders/<nick>.glsl. The callback will be called for each
-  // newly created shader instance.
+
   constructor() {
-    utils.debug('HI');
+
     this.shaderFactory = new ShaderFactory(Effect.getNick(), (shader) => {
       // Store uniform locations of newly created shaders.
-      shader._uFadeWidth = shader.get_uniform_location("uFadeWidth");
-
-      utils.debug('HI');
+      shader._uStartPos = shader.get_uniform_location("uStartPos");
+      shader._uSeed     = shader.get_uniform_location("uSeed");
 
       // Write all uniform values at the start of each animation.
-      shader.connect("begin-animation", (shader, settings) => {
-        shader.set_uniform_float(shader._uFadeWidth, 1, [
-          settings.get_double("butterflies-width"),
-        ]);
+      shader.connect("begin-animation", (shader, settings, forOpening, testMode, actor) => {
+        let seed = [testMode ? 0 : Math.random(), testMode ? 0 : Math.random()];
+
+
+        // This is shamelessly ripped from the incinerate effect
+        // If this option is set, we use the mouse pointer position. Because the actor
+        // position may change after the begin-animation signal is called, we set the
+        // uStartPos uniform during the update callback.
+        if(settings.get_boolean('butterflies-use-pointer')) {
+          shader._startPointerPos = global.get_pointer();
+          shader._actor           = actor;
+        } else {
+          // Else, a random position along the window boundary is used as start position
+          // for the incinerate effect.
+          let startPos = seed[0] > seed[1] ? [seed[0], Math.floor(seed[1] + 0.5)] :
+                                              [Math.floor(seed[0] + 0.5), seed[1]];
+
+          shader.set_uniform_float(shader._uStartPos, 2, startPos);
+          shader._startPointerPos = null;
+        }
+
+        shader.set_uniform_float(shader._uSeed, 2, seed);
       });
+
+      
+      // This is shamelessly ripped from the incinerate effect:
+      // If the mouse pointer position is used as start position, we set the uStartPos
+      // uniform during the update callback as the actor position may not be set up
+      // properly before the begin animation callback.
+      shader.connect('update-animation', (shader) => {
+        if (shader._startPointerPos) {
+          const [x, y]               = shader._startPointerPos;
+          const [ok, localX, localY] = shader._actor.transform_stage_point(x, y);
+
+          if (ok) {
+            let startPos = [
+              Math.max(0.0, Math.min(1.0, localX / shader._actor.width)),
+              Math.max(0.0, Math.min(1.0, localY / shader._actor.height))
+            ];
+            shader.set_uniform_float(shader._uStartPos, 2, startPos);
+          }
+        }
+      });
+
+      // Make sure to drop the reference to the actor.
+      shader.connect('end-animation', (shader) => {
+        shader._actor = null;
+      });
+
     });
   }
 
@@ -81,7 +118,7 @@ export default class Effect {
   // binds all user interface elements to the respective settings keys of the profile.
   static bindPreferences(dialog) {
     dialog.bindAdjustment('butterflies-animation-time');
-    dialog.bindAdjustment('butterflies-width');
+    dialog.bindSwitch('butterflies-use-pointer');
   }
 
   // ---------------------------------------------------------------- API for extension.js
