@@ -286,7 +286,7 @@ vec4 pixelColor(in vec2 texCoord, in vec2 resolution, float time, inout float wi
 // }
 
 void main() {
-  animCenter = uStartPos;
+  animCenter = uStartPos * uSize;
   cellWidth = vec2(40.0, 40.0);
 
   float dist = length(uSize)*1.5;
