@@ -213,6 +213,8 @@ Butterfly butterfly(Cell id, float t) {
   vec2 pos2 = ray*r2 + offset2;
   
   vec2 vel_dir = normalize(pos2-pos1);
+  if(uForOpening) vel_dir *= -1.0;
+
   b.rotation = atan(vel_dir.y, vel_dir.x)-TAU/4.0;
   b.pos += pos1;
   
@@ -312,9 +314,13 @@ void main() {
   timeToAccel = speed/accel;
   distToAccel = accel*timeToAccel*timeToAccel/2.0;
 
+  // Adjust according to which animation we're doing
+  float time = uProgress * uDuration;
+  if(uForOpening) time = uDuration - time;
+
   // Render and blend
   float opacity = 0.0;
-  vec4 color = pixelColor(iTexCoord.st, size, uProgress * uDuration, opacity);
+  vec4 color = pixelColor(iTexCoord.st, size, time, opacity);
   color = blend(color, oColor);
   color.a *= opacity;
 
