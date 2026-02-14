@@ -287,22 +287,34 @@ vec4 pixelColor(in vec2 texCoord, in vec2 resolution, float time, inout float wi
 // }
 
 void main() {
-  animCenter = uStartPos * uSize;
+
+  // Get the window color. Make sure to adjust for the increased actor size
+  const vec2 ACTOR_SCALE = vec2(1.5, 1.5);
+  const vec2 PADDING = ACTOR_SCALE / 2.0 - 0.5;
+  vec2 uv = iTexCoord.st*ACTOR_SCALE - PADDING;
+  vec4 oColor = getInputColor(uv);
+
+  //
+  // Setup our global variables
+  //
+  vec2 size = uSize * ACTOR_SCALE;
+  animCenter = uStartPos * size;
   cellWidth = vec2(uButterflySpacing, uButterflySpacing);
 
-  float dist = length(uSize)*1.5;
+  // Adjust speed according to how big the window is
+  // Make sure that the butterflies fly accross the window in approx the
+  // duration of the animation
+  float dist = length(uSize)*1.2;
   float timeAtSpeed = 0.7*(uDuration - startup);
   float timeAtAccel = 0.3*(uDuration - startup);
   speed = dist/(timeAtSpeed + 0.5*timeAtAccel);
   accel = speed/timeAtAccel;
-
   timeToAccel = speed/accel;
   distToAccel = accel*timeToAccel*timeToAccel/2.0;
 
-  // Get the color from the window texture.
-  vec4 oColor = getInputColor(iTexCoord.st);
+  // Render and blend
   float opacity = 0.0;
-  vec4 color = pixelColor(iTexCoord.st, uSize, uProgress * uDuration, opacity);
+  vec4 color = pixelColor(iTexCoord.st, size, uProgress * uDuration, opacity);
   color = blend(color, oColor);
   color.a *= opacity;
 
