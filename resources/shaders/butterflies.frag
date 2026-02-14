@@ -12,16 +12,14 @@
 // SPDX-FileCopyrightText: Joshua Smith <joshua@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-uniform vec2 uSeed;
-uniform vec3 uColor;
-uniform vec2 uStartPos;
+uniform vec2  uSeed;
+uniform vec3  uColor;
+uniform vec2  uStartPos;
+uniform float uButterflySpacing;
+uniform float uButterflySize;
 
 const float PI  = radians(180.0);
 const float TAU = radians(360.0);
-
-vec4 blend(vec4 a, vec4 b) {
-  return a.a*a + (1.0-a.a)*b;
-}
 
 //
 // A lot of this is based upong images of the Blue Morpho butterfly (Morpho Menelaus)
@@ -92,6 +90,10 @@ vec4 body(vec2 x) {
   return vec4(0.0,0.0,0.0,0.0);
 }
 
+vec4 blend(vec4 a, vec4 b) {
+  return a.a*a + (1.0-a.a)*b;
+}
+
 vec4 butterfly(vec2 x, vec2 position, float size, float rotation, float wing_angle) {
   vec2 dx = x - position;
   dx = rotate(dx, -rotation);
@@ -120,7 +122,6 @@ float distToAccel;
 
 //const float startup = 0.25;
 const float startup = 0.0;
-
 
 float baseDistFromTime(float t) {
   float d = 0.0;
@@ -227,7 +228,7 @@ vec4 renderButterfliesNear(Cell id, vec2 windowCoord, float time) {
   for(int i=-BORDER_SIZE; i<=BORDER_SIZE; i++) {
       for(int j=-BORDER_SIZE; j<=BORDER_SIZE; j++) {
           Butterfly b = butterfly(id + ivec2(i,j), time);
-          vec4 c = butterfly(windowCoord, b.pos, 10.0, b.rotation, b.wingAngle);
+          vec4 c = butterfly(windowCoord, b.pos, uButterflySize, b.rotation, b.wingAngle);
           c.a = c.a*b.opacity;
           color = blend(c, color);
       }
@@ -287,7 +288,7 @@ vec4 pixelColor(in vec2 texCoord, in vec2 resolution, float time, inout float wi
 
 void main() {
   animCenter = uStartPos * uSize;
-  cellWidth = vec2(40.0, 40.0);
+  cellWidth = vec2(uButterflySpacing, uButterflySpacing);
 
   float dist = length(uSize)*1.5;
   float timeAtSpeed = 0.7*(uDuration - startup);

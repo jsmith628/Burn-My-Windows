@@ -1129,6 +1129,18 @@ SPDX-License-Identifier: CC0-1.0
       <description>Transition time for the Butterfly effect.</description>
     </key>
 
+    <key name="butterflies-spacing" type="d">
+      <default>40.0</default>
+      <summary>Butterflies Spacing</summary>
+      <description>Average initial distance between butterflies</description>
+    </key>
+
+    <key name="butterflies-size" type="d">
+      <default>10.0</default>
+      <summary>Butterflies Size</summary>
+      <description>Average size of butterflies.</description>
+    </key>
+
     <key name="butterflies-color" type="s">
       <default>"rgb(80, 0, 255)"</default>
       <summary>Incinerate Color</summary>

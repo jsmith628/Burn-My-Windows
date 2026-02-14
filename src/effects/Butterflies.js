@@ -34,9 +34,11 @@ export default class Effect {
 
     this.shaderFactory = new ShaderFactory(Effect.getNick(), (shader) => {
       // Store uniform locations of newly created shaders.
-      shader._uSeed     = shader.get_uniform_location("uSeed");
-      shader._uColor    = shader.get_uniform_location("uColor");
-      shader._uStartPos = shader.get_uniform_location("uStartPos");
+      shader._uSeed             = shader.get_uniform_location("uSeed");
+      shader._uColor            = shader.get_uniform_location("uColor");
+      shader._uStartPos         = shader.get_uniform_location("uStartPos");
+      shader._uButterflySpacing = shader.get_uniform_location("uButterflySpacing");
+      shader._uButterflySize    = shader.get_uniform_location("uButterflySize");
 
       // Write all uniform values at the start of each animation.
       shader.connect("begin-animation", (shader, settings, forOpening, testMode, actor) => {
@@ -60,10 +62,18 @@ export default class Effect {
           shader._startPointerPos = null;
         }
 
+        // We don't want the butterflies so big they clip or overlap the others
+        // too much, so we cap the size of the butterflies at what the user sets
+        // for the spacing.
+        // TODO: maybe enforce this in the UI somehow?
+        let spacing = settings.get_double('butterflies-spacing');
+        let size = settings.get_double('butterflies-size');
 
         // clang-format off
-        shader.set_uniform_float(shader._uSeed,  2, seed);
-        shader.set_uniform_float(shader._uColor, 3, utils.parseColor(settings.get_string('butterflies-color')));
+        shader.set_uniform_float(shader._uSeed,             2, seed);
+        shader.set_uniform_float(shader._uColor,            3, utils.parseColor(settings.get_string('butterflies-color')));
+        shader.set_uniform_float(shader._uButterflySpacing, 1, [spacing]);
+        shader.set_uniform_float(shader._uButterflySize,    1, [Math.min(size, spacing)]);
         // clang-format on
       });
 
@@ -123,6 +133,8 @@ export default class Effect {
   // binds all user interface elements to the respective settings keys of the profile.
   static bindPreferences(dialog) {
     dialog.bindAdjustment('butterflies-animation-time');
+    dialog.bindAdjustment('butterflies-spacing');
+    dialog.bindAdjustment('butterflies-size');
     dialog.bindSwitch('butterflies-use-pointer');
     dialog.bindColorButton('butterflies-color');
   }
