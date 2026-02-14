@@ -34,8 +34,9 @@ export default class Effect {
 
     this.shaderFactory = new ShaderFactory(Effect.getNick(), (shader) => {
       // Store uniform locations of newly created shaders.
-      shader._uStartPos = shader.get_uniform_location("uStartPos");
       shader._uSeed     = shader.get_uniform_location("uSeed");
+      shader._uColor    = shader.get_uniform_location("uColor");
+      shader._uStartPos = shader.get_uniform_location("uStartPos");
 
       // Write all uniform values at the start of each animation.
       shader.connect("begin-animation", (shader, settings, forOpening, testMode, actor) => {
@@ -59,7 +60,11 @@ export default class Effect {
           shader._startPointerPos = null;
         }
 
-        shader.set_uniform_float(shader._uSeed, 2, seed);
+
+        // clang-format off
+        shader.set_uniform_float(shader._uSeed,  2, seed);
+        shader.set_uniform_float(shader._uColor, 3, utils.parseColor(settings.get_string('butterflies-color')));
+        // clang-format on
       });
 
       
@@ -119,6 +124,7 @@ export default class Effect {
   static bindPreferences(dialog) {
     dialog.bindAdjustment('butterflies-animation-time');
     dialog.bindSwitch('butterflies-use-pointer');
+    dialog.bindColorButton('butterflies-color');
   }
 
   // ---------------------------------------------------------------- API for extension.js

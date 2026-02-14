@@ -12,8 +12,9 @@
 // SPDX-FileCopyrightText: Joshua Smith <joshua@gmail.com>
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-uniform vec2 uStartPos;
 uniform vec2 uSeed;
+uniform vec3 uColor;
+uniform vec2 uStartPos;
 
 const float PI  = radians(180.0);
 const float TAU = radians(360.0);
@@ -49,7 +50,7 @@ vec4 butterfly_wings(vec2 p, float wing_angle) {
   const float ANGLE6 = 14.0*PI/16.0;
   const float ANGLE7 = 16.0*PI/16.0;
     
-    
+  // clang-format off
   float s1 = mix(0.4, 1.0, smoothstep(ANGLE1, ANGLE2, a));
   float s2 = 0.015*(cos(8.0*TAU*(a-ANGLE2)/(ANGLE6-ANGLE2))+1.0); //use remap instead
   float s = s1*s1
@@ -58,14 +59,14 @@ vec4 butterfly_wings(vec2 p, float wing_angle) {
               +(0.2-s2)*smoothstep(ANGLE4, ANGLE5, a)
               +(0.1-s2)*smoothstep(ANGLE5, ANGLE6, a)
               -(0.7)*smoothstep(ANGLE6, ANGLE7, a);
-    
+  // clang-format on  
     
   float r = 1.0 * s;
   float r_inner = r*0.85*smoothstep(ANGLE1, ANGLE2, a);
                 
   vec4 color = vec4(0.0,0.0,0.0,0.0);
   if(R2 < r*r) color = vec4(0,0,0,1);
-  if(R2 < r_inner*r_inner) color = vec4(0,0,1,1);
+  if(R2 < r_inner*r_inner) color = vec4(uColor,1);
   return color;
 }
 

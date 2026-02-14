@@ -1129,10 +1129,16 @@ SPDX-License-Identifier: CC0-1.0
       <description>Transition time for the Butterfly effect.</description>
     </key>
 
+    <key name="butterflies-color" type="s">
+      <default>"rgb(80, 0, 255)"</default>
+      <summary>Incinerate Color</summary>
+      <description>The color of the effect.</description>
+    </key>
+
     <key name="butterflies-use-pointer" type="b">
       <default>true</default>
       <summary>Butterflies Use Pointer</summary>
-      <description>Use the pointer location for the start of the Butterflies effect.</description>
+      <description>Use the pointer location for the start of the butterflies effect.</description>
     </key>
 
   </schema>
